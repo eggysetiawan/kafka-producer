@@ -1,8 +1,9 @@
-package main
+package app
 
 import (
 	"fmt"
 	"github.com/Shopify/sarama"
+	"gopkg.in/alecthomas/kingpin.v2"
 	"log"
 	"net/http"
 	"strconv"
@@ -29,7 +30,7 @@ var (
 	maxRetry   = kingpin.Flag("maxRetry", "Retry limit").Default("5").Int()
 )
 
-func main() {
+func Produce() {
 	//producer, topic, err := config.NewKafkaConnect("EJLOG")
 	//
 	//brokerList := kingpin.Flag("brokerList", "List of brokers to connect").Default("localhost:9092").Strings()
@@ -69,7 +70,7 @@ func main() {
 	var group = &sync.WaitGroup{}
 
 	for i := 0; i < 1000; i++ {
-		go Produce(producer, group, &mutex, i)
+		go produceData(producer, group, &mutex, i)
 	}
 
 	group.Wait()
@@ -81,7 +82,7 @@ func main() {
 	//}
 }
 
-func Produce(producer sarama.SyncProducer, group *sync.WaitGroup, mutex *sync.Mutex, i int) {
+func produceData(producer sarama.SyncProducer, group *sync.WaitGroup, mutex *sync.Mutex, i int) {
 
 	group.Add(1)
 
